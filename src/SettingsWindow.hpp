@@ -3,12 +3,10 @@
 
 #include "core.hpp"
 
-class SettingsWindow : public core::Window
-{
+class SettingsWindow : public core::Window {
 public:
-    SettingsWindow();
-    virtual void onDraw() override;
-
+  SettingsWindow();
+  virtual void onDraw() override;
 };
 
 #endif // SETTINGSWINDOW_H

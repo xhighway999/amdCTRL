@@ -1,17 +1,24 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include "GPU.hpp"
+#include "GPUWidgets.hpp"
+#include "MonitorWindow.hpp"
+#include "SettingsWindow.hpp"
+#include "Shell.hpp"
 #include "core.hpp"
 
-#include "SettingsWindow.hpp"
-
-class MainWindow : public core::Window
-{
+class MainWindow : public core::Window {
 public:
-    virtual void onDraw() override;
-private:
-    SettingsWindow* sw = new SettingsWindow();
+  MainWindow();
+  virtual void onDraw() override;
 
+private:
+  bool firstDraw = true;
+  GPU gpu;
+  Shell cr;
+  SettingsWindow *sw = new SettingsWindow();
+  MonitorWindow *mw  = new MonitorWindow(gpu);
 };
 
 #endif // MAINWINDOW_H
