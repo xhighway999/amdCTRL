@@ -5,9 +5,25 @@ MainWindow::MainWindow() {
 }
 
 void MainWindow::onDraw() {
-  static bool showDemo = false;
-  static GpuSettings settings;
-
+  //Menu Bat
+  {
+    if(ImGui::BeginMenuBar()) {
+      if(ImGui::BeginMenu("Window")) {
+        if(ImGui::MenuItem("Show Monitor Window", NULL, &showMonitor)) {
+          mw->setVisible(showMonitor);
+        }
+        if(ImGui::MenuItem("Show Settings Window", NULL, &showSettings)) {
+          sw->setVisible(showSettings);
+        }
+        
+        if(ImGui::MenuItem("Show Demo Window", NULL, &showDemo)) {
+         
+        }
+        ImGui::EndMenu();
+      }
+      ImGui::EndMenuBar();
+    }
+  }
   GPUClock(&settings);
   GPUPower(&settings);
   GPUMemClock(&settings);
@@ -15,31 +31,13 @@ void MainWindow::onDraw() {
     gpu.applySettings(settings);
   }
 
-  ImGui::Checkbox("Show IMGUI Demo", &showDemo);
   if(showDemo) {
     ImGui::ShowDemoWindow();
   }
-  static bool showMonitor = true;
-  ImGui::Checkbox("Show Monitor", &showMonitor);
-  mw->setVisible(showMonitor);
 
   if(firstDraw) {
     firstDraw          = false;
     char *const args[] = {"sh", NULL};
     cr.runCommand(args);
   }
-
-  // gpu.updateStats();
-  /*ImGui::BeginChild("CrappyTerm");
-  {
-    static std::string buffer;
-    buffer += cr.readAvail();
-    ImGui::TextWrapped("%s", buffer.c_str());
-    static std::string input = "";
-    if(ImGui::InputText("##CMD", input,ImGuiInputTextFlags_EnterReturnsTrue)) {
-      cr.write(input);
-      cr.write("\n");
-    }
-  }
-  ImGui::EndChild();*/
 }

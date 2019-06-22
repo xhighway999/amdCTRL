@@ -17,4 +17,4 @@ add_library(src commandrunner.hpp
                 SettingsWindow.cpp
                 Shell.hpp
                 Shell.cpp)
-target_link_libraries(src core)
+target_link_libraries(src xhfr)

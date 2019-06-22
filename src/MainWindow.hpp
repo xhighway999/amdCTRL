@@ -19,6 +19,8 @@ private:
   Shell cr;
   SettingsWindow *sw = new SettingsWindow();
   MonitorWindow *mw  = new MonitorWindow(gpu);
+  bool showMonitor = true, showSettings = false, showDemo = false;
+  GpuSettings settings;
 };
 
 #endif // MAINWINDOW_H
