@@ -5,7 +5,7 @@ MainWindow::MainWindow() {
 }
 
 void MainWindow::onDraw() {
-  //Menu Bat
+  // Menu Bat
   {
     if(ImGui::BeginMenuBar()) {
       if(ImGui::BeginMenu("Window")) {
@@ -15,9 +15,8 @@ void MainWindow::onDraw() {
         if(ImGui::MenuItem("Show Settings Window", NULL, &showSettings)) {
           sw->setVisible(showSettings);
         }
-        
+
         if(ImGui::MenuItem("Show Demo Window", NULL, &showDemo)) {
-         
         }
         ImGui::EndMenu();
       }
