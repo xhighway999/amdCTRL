@@ -1,4 +1,4 @@
 [submodule "xhfr"]
 	path = xhfr
-	url = git@bitbucket.org:xhighway999/xhfr.git
+	url = https://github.com/xhighway999/xhfr.git
 	branch = master
