@@ -1,8 +1,8 @@
 #include "GPU.hpp"
 
-bool GPU::canConnect() {
+void GPU::connect() {
   // Open a new shell with root access
-  char *const args[] = {"pkexec", "bash", "-x", NULL};
+  char *const args[] = {"pkexec", "bash", "-x", nullptr};
   shell.runCommand(args);
   shell.setBlocking(true);
 }

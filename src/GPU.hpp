@@ -10,7 +10,7 @@
 
 class GPU {
 public:
-  bool canConnect();
+  void connect();
   void updateStats();
   void applySettings(const GpuSettings &settings);
   void setFanManual(bool manual = true);
