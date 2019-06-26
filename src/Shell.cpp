@@ -82,6 +82,6 @@ std::string Shell::readAvail() {
   } while(dataInPipe);
 }
 
-void Shell::write(std::string str) {
+size_t Shell::write(std::string str) {
   size_t written = ::write(fd[0], str.c_str(), str.size());
 }

@@ -2,21 +2,17 @@
 
 MainWindow::MainWindow() {
   gpu.canConnect();
+  setFlag(ImGuiWindowFlags_MenuBar);
+  mw->setVisible(showMonitor);
 }
 
 void MainWindow::onDraw() {
-  // Menu Bat
+  // Menu Bar
   {
     if(ImGui::BeginMenuBar()) {
       if(ImGui::BeginMenu("Window")) {
         if(ImGui::MenuItem("Show Monitor Window", NULL, &showMonitor)) {
           mw->setVisible(showMonitor);
-        }
-        if(ImGui::MenuItem("Show Settings Window", NULL, &showSettings)) {
-          sw->setVisible(showSettings);
-        }
-
-        if(ImGui::MenuItem("Show Demo Window", NULL, &showDemo)) {
         }
         ImGui::EndMenu();
       }
@@ -29,14 +25,15 @@ void MainWindow::onDraw() {
   if(ImGui::Button("Apply")) {
     gpu.applySettings(settings);
   }
-
-  if(showDemo) {
-    ImGui::ShowDemoWindow();
-  }
-
-  if(firstDraw) {
-    firstDraw          = false;
-    char *const args[] = {"sh", NULL};
-    cr.runCommand(args);
+  ImGui::Separator();
+  {
+    static int fanSpeed = 20;
+    ImGui::Text("Fan Speed");
+    if(ImGui::Checkbox("Manual Mode", &fanManualMode))
+      gpu.setFanManual(fanManualMode);
+    if(fanManualMode) {
+      if(ImGui::SliderInt("Fan Speed", &fanSpeed, 0, 255))
+        gpu.setFanSpeed(fanSpeed);
+    }
   }
 }

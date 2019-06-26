@@ -10,14 +10,11 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-/**
- * @todo write docs
- */
 class Shell {
 public:
   bool runCommand(char *const command[]);
   std::string readAvail();
-  void write(std::string str);
+  size_t write(std::string str);
   void setBlocking(bool b = false);
 
 private:

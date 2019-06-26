@@ -4,22 +4,20 @@
 #include "GPU.hpp"
 #include "GPUWidgets.hpp"
 #include "MonitorWindow.hpp"
-#include "SettingsWindow.hpp"
 #include "Shell.hpp"
-#include "core.hpp"
+#include "xhfr.hpp"
 
-class MainWindow : public core::Window {
+class MainWindow : public xhfr::Window {
 public:
   MainWindow();
   virtual void onDraw() override;
 
 private:
-  bool firstDraw = true;
   GPU gpu;
   Shell cr;
-  SettingsWindow *sw = new SettingsWindow();
   MonitorWindow *mw  = new MonitorWindow(gpu);
-  bool showMonitor = true, showSettings = false, showDemo = false;
+  bool showMonitor   = true;
+  bool fanManualMode = false;
   GpuSettings settings;
 };
 

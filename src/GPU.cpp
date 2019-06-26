@@ -2,7 +2,7 @@
 
 bool GPU::canConnect() {
   // Open a new shell with root access
-  char *const args[] = {"pkexec", "su", NULL};
+  char *const args[] = {"pkexec", "bash", "-x", NULL};
   shell.runCommand(args);
   shell.setBlocking(true);
 }
@@ -36,6 +36,16 @@ void GPU::applySettings(const GpuSettings &settings) {
   updateStats();
 }
 
+void GPU::setFanManual(bool manual) {
+  int value = manual ? 1 : 2;
+  shell.write("echo " + std::to_string(value) + " > " + hwmonpath +
+              "/pwm1_enable\n");
+}
+
+void GPU::setFanSpeed(unsigned char target) {
+  shell.write("echo " + std::to_string(target) + " > " + hwmonpath + "/pwm1\n");
+}
+
 std::string readFile(const std::string_view path) {
   std::ifstream infile;
   infile.open(path.data());
@@ -45,11 +55,21 @@ std::string readFile(const std::string_view path) {
 };
 
 int GPU::getTemp() const {
-  auto ret = readFile(devicepath + "/hwmon/hwmon1/temp1_input");
+  auto ret = readFile(hwmonpath + "/temp1_input");
   return std::stoi(ret);
 }
 
 int GPU::getClock() const {
-  auto ret = readFile(devicepath + "/hwmon/hwmon1/freq1_input");
+  auto ret = readFile(hwmonpath + "/freq1_input");
+  return std::stoi(ret);
+}
+
+int GPU::getMemClock() const {
+  auto ret = readFile(hwmonpath + "/freq2_input");
+  return std::stoi(ret);
+}
+
+int GPU::getFanSpeed() const {
+  auto ret = readFile(hwmonpath + "/fan1_input");
   return std::stoi(ret);
 }

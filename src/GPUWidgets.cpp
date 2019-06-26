@@ -53,7 +53,7 @@ bool handleLimiter(const char *name,
                 rectEnd,
                 getColor(ImGuiCol_Text),
                 std::to_string(*val).c_str());
-  list->AddRect(rectStart, rectEnd, ImColor(255, 0, 0));
+  list->AddRectFilled(rectStart, rectEnd, getColor(ImGuiCol_FrameBg));
   return moveMode;
 }
 
@@ -115,7 +115,7 @@ bool handleGraphPoint(const char *name,
                 rectEnd,
                 getColor(ImGuiCol_Text),
                 text.c_str());
-  list->AddRect(rectStart, rectEnd, ImColor(255, 0, 0));
+  list->AddRectFilled(rectStart, rectEnd, ImColor(100, 100, 100));
   return moveMode;
 }
 
@@ -132,6 +132,33 @@ void GPUClock(GpuSettings *settings) {
 
     bool focus = false;
 
+    // draw lines
+    {
+      auto toScreenSpace = [=](const GpuSettings::GraphPoint &p) {
+        auto posX = remap(settings->dispClockMin,
+                          settings->dispClockMax,
+                          canvasPos.x,
+                          canvasSize.x + canvasPos.x,
+                          p.clock);
+        auto posY = remap(settings->voltageMin,
+                          settings->voltageMax,
+                          canvasSize.y + canvasPos.y,
+                          canvasPos.y,
+                          p.voltage);
+
+        return ImVec2(posX, posY);
+      };
+      ImVec2 prev = toScreenSpace(
+          settings->graphData
+              [0]); //, last =
+                    // toScreenSpace(settings->graphData[settings->graphPoints-1]);
+      for(int i = 1; i < settings->graphPoints; i++) {
+        auto p = toScreenSpace(settings->graphData[i]);
+        draw_list->AddLine(p, prev, getColor(ImGuiCol_PlotLines), 2);
+        prev = p;
+      }
+    }
+
     for(int i = 0; i < settings->graphPoints; i++) {
       focus |= handleGraphPoint(("GP" + std::to_string(i)).c_str(),
                                 &settings->graphData[i],
@@ -147,7 +174,6 @@ void GPUClock(GpuSettings *settings) {
       if(i == settings->graphPoints - 1) {
         settings->graphData[i].clock = settings->coreClockMax;
       }
-      // every point else
     }
     handleLimiter("leftLimiter",
                   &settings->coreClockMin,
@@ -163,30 +189,7 @@ void GPUClock(GpuSettings *settings) {
                   canvasPos,
                   canvasSize,
                   focus);
-    // draw lines
-    auto toScreenSpace = [=](const GpuSettings::GraphPoint &p) {
-      auto posX = remap(settings->dispClockMin,
-                        settings->dispClockMax,
-                        canvasPos.x,
-                        canvasSize.x + canvasPos.x,
-                        p.clock);
-      auto posY = remap(settings->voltageMin,
-                        settings->voltageMax,
-                        canvasSize.y + canvasPos.y,
-                        canvasPos.y,
-                        p.voltage);
 
-      return ImVec2(posX, posY);
-    };
-    ImVec2 prev = toScreenSpace(
-        settings->graphData
-            [0]); //, last =
-                  // toScreenSpace(settings->graphData[settings->graphPoints-1]);
-    for(int i = 1; i < settings->graphPoints; i++) {
-      auto p = toScreenSpace(settings->graphData[i]);
-      draw_list->AddLine(p, prev, ImColor(0, 0, 255), 2);
-      prev = p;
-    }
     ImGui::EndChild();
     ImGui::Text("Frequency (MHz)");
   }
@@ -209,46 +212,4 @@ void GPUPower(GpuSettings *settings) {
                    settings->powerLimitMin,
                    settings->powerLimitMax);
   settings->powerLimit = power;
-}
-
-void AutoPlot(const char *label,
-              float *newValue,
-              float *values,
-              int values_count,
-              const char *overlay_text,
-              float scale_min,
-              float scale_max,
-              ImVec2 graph_size,
-              int stride) {
-  char cat[512];
-  if(strlen(label) + 32 > 512)
-    abort();
-  strcpy(cat, label);
-  strcat(cat, "refresh_time");
-  float &refresh_time =
-      *ImGui::GetStateStorage()->GetFloatRef(ImGui::GetID(cat), 0);
-  strcpy(cat, label);
-  strcat(cat, "values_offset");
-  int &values_offset =
-      *ImGui::GetStateStorage()->GetIntRef(ImGui::GetID(cat), 0);
-  if(refresh_time == 0.0)
-    refresh_time = ImGui::GetTime();
-  while(refresh_time < ImGui::GetTime()) {
-    static float phase    = 0.0f;
-    values[values_offset] = *newValue;
-    values_offset         = (values_offset + 1) % values_count;
-    phase += 0.10f * values_offset;
-    refresh_time += 1.0f / 60.0f;
-  }
-  ImGui::PlotLines(label,
-                   values,
-                   values_count,
-                   values_offset,
-                   overlay_text,
-                   scale_min,
-                   scale_max,
-                   graph_size,
-                   stride);
-  ImGui::SameLine();
-  ImGui::Text("%s", std::to_string((int)values[values_offset - 1]).c_str());
 }

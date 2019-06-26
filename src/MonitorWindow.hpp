@@ -3,17 +3,17 @@
 
 #include "GPU.hpp"
 #include "GPUWidgets.hpp"
-#include "core.hpp"
-class MonitorWindow : public core::Window {
+#include "xhfr.hpp"
+class MonitorWindow : public xhfr::Window {
 public:
   /**
    * Default constructor
    */
   MonitorWindow(const GPU &ngpu);
   void onDraw() override;
-  const GPU &gpu;
 
 private:
+  const GPU &gpu;
   double refresh_time = 60.0;
 };
 
