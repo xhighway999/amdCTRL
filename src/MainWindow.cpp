@@ -1,7 +1,7 @@
 #include "MainWindow.hpp"
 
 MainWindow::MainWindow() {
-  gpu.canConnect();
+  gpu.connect();
   setFlag(ImGuiWindowFlags_MenuBar);
   mw->setVisible(showMonitor);
 }
